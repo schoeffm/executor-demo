@@ -2,8 +2,6 @@ package de.bender;
 
 import de.bender.DemoApplication.MyExecutor;
 import org.eclipse.microprofile.context.ManagedExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -19,28 +17,25 @@ public class ExampleResource {
     @MyExecutor
     ManagedExecutor executor;
 
-    Logger logger = LoggerFactory.getLogger(Exception.class);
-
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {
 
-        logger.info("\n- Processor-Count: {}" +
-                    "\n- ForkJoinPool Parallelism: {}",
-                Runtime.getRuntime().availableProcessors(),
-                ForkJoinPool.commonPool().getParallelism());
+        System.out.println(
+                "\n- Processor-Count: " + Runtime.getRuntime().availableProcessors() +
+                "\n- ForkJoinPool Parallelism: " + ForkJoinPool.commonPool().getParallelism());
 
-        logger.info(Thread.currentThread().getName());
+        System.out.println(Thread.currentThread().getName());
+
         executor.newIncompleteFuture()
                 .supplyAsync(() -> Thread.currentThread().getName())
                 .thenApply(name -> { sleep(5000L); return name; })
-                .thenAccept(name -> logger.info("Finished async processing: {}", name));
+                .thenAccept(name -> System.out.println("Finished async processing: " + name));
 
-        logger.info("Delivering REST-Response");
+        System.out.println("Delivering REST-Response");
 
         return "triggered";
     }
-
 
 
     void sleep(long pauseTime) {

@@ -17,15 +17,14 @@ import java.lang.annotation.Target;
 @ApplicationScoped
 @ApplicationPath("rest")
 public class DemoApplication extends Application {
-
     @Produces
     @ApplicationScoped
     @MyExecutor
     ManagedExecutor executor = ManagedExecutor.builder()
             .propagated(ThreadContext.TRANSACTION)
-                .maxAsync(10)
-                .maxQueued(25)
-                .build();
+            .maxAsync(10)
+            .maxQueued(25)
+            .build();
 
     void disposeExecutor(@Disposes @MyExecutor ManagedExecutor exec) {
         exec.shutdownNow();
